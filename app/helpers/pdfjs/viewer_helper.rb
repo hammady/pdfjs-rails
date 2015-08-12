@@ -1,42 +1,7 @@
 module Pdfjs
   module ViewerHelper
-    EVERYTHING = [
-      :page_selector,
-      :sidebar,
-      :page_buttons,
-      :zoom_buttons,
-      :zoom_select,
-      :fullscreen,
-      :bookmark,
-      :open,
-      :download,
-      :print
-    ]
-
-    DEFAULT = [
-      :page_buttons,
-      :zoom_buttons,
-      :zoom_select,
-      :fullscreen,
-      :download
-    ]
-
-    MINIMAL = [
-      :page_buttons,
-      :zoom_buttons,
-      :download
-    ]
 
     def pdf_viewer(filename, options={})
-      toolbar = options.fetch(:toolbar, :default)
-
-      toolbar = case toolbar
-      when :everything; EVERYTHING
-      when :minimal; MINIMAL
-      else DEFAULT
-      end unless toolbar.is_a?(Array)
-
-      can_display = lambda { |arg| toolbar.member?(arg) ? '' : ' hidden' }
 
       html = <<-HTML
         <body tabindex="1" class="loadingInProgress">
@@ -408,7 +373,14 @@ module Pdfjs
         </div>
       </div>
       </div>
+
+      <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+          PDFView.open(#{filename.to_json});
+        }, true);
+      </script>
       </body>
+
       HTML
 
       html.html_safe
